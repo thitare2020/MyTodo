@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "630210894881",
+    "firebase_url": "https://myproject2020-c23f7.firebaseio.com",
+    "project_id": "myproject2020-c23f7",
+    "storage_bucket": "myproject2020-c23f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630210894881:android:2076d554e9fa7d7740d760",
+        "android_client_info": {
+          "package_name": "com.example.information_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "630210894881-2ah879n1d3tm9gqb5smng3eee3vu6tfj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYwhb_utjmaFw_WRr3nzHuw2lCawz3QCA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "630210894881-2ah879n1d3tm9gqb5smng3eee3vu6tfj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "630210894881-331k45ohi8pa5lf3rdkv3om5fs52br6i.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.information-app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
