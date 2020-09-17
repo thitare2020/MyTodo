@@ -120,7 +120,7 @@ class _mainPageState extends State<mainPage> {
         ),
         body: StreamBuilder<QuerySnapshot>(
             stream: collection.snapshots(),
-            builder: (BuildContext context,AsyncSnapshot snapshot) {
+            builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return ListView(
                   shrinkWrap: true,
@@ -142,15 +142,17 @@ class _mainPageState extends State<mainPage> {
                           controlAffinity: ListTileControlAffinity.leading,
                           onChanged: (value) {
                             String title = document.data()['Title'];
-                            collection
-                                .doc(document.id)
-                                .update({'Title': title, 'isCheck': value});
-                            Timer(Duration(milliseconds: 400), () {
-                              Scaffold.of(context).hideCurrentSnackBar();
-                              Scaffold.of(context)
-                                  .showSnackBar(_showSnackBar(document));
-                              _delete(document);
+                              collection
+                                  .doc(document.id)
+                                  .update({'Title': title, 'isCheck': value});
+
+                            Timer(Duration(milliseconds: 1000), (){
+                                _delete(document);
+                                Scaffold.of(context).hideCurrentSnackBar();
+                                Scaffold.of(context)
+                                    .showSnackBar(_showSnackBar(document));
                             });
+
                           }),
                       color: Theme.of(context).cardColor,
                       shape: RoundedRectangleBorder(
@@ -170,6 +172,7 @@ class _mainPageState extends State<mainPage> {
   Widget _showSnackBar(DocumentSnapshot document) {
     String title = document.data()['Title'];
     return SnackBar(
+        duration: const Duration(milliseconds: 1000),
         content: Text('$title is Complete'),
         action: SnackBarAction(
           label: 'Undo',
