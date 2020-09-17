@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
           return MaterialApp(
-
             home: mainPage(),
           );
         }
@@ -48,8 +47,9 @@ class mainPage extends StatefulWidget {
 }
 
 class _mainPageState extends State<mainPage> {
-  final collection = FirebaseFirestore.instance.collection('myTodo');
-  final textController = TextEditingController();
+  final _collection = FirebaseFirestore.instance.collection('myTodo');
+  final _textController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   void _showDialog() {
     showDialog(
         context: context,
@@ -57,11 +57,21 @@ class _mainPageState extends State<mainPage> {
           return AlertDialog(
             content: Padding(
                 padding: EdgeInsets.all(5.0),
-                child: TextField(
-                    controller: textController,
+                child:  Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                    controller: _textController,
                     decoration: InputDecoration(
                       hintText: ('please input here'),
-                    ))),
+                    ))
+                )
+            ),
             elevation: 24.0,
             actions: <Widget>[
               FlatButton(
@@ -79,10 +89,11 @@ class _mainPageState extends State<mainPage> {
                 splashColor: Colors.blueAccent,
                 onPressed: () {
                   _insertion();
-                  if (textController.text.trim() != '') {
+                  if (_formKey.currentState.validate()) {
                     Navigator.of(context).pop();
-                    textController.clear();
+                    _textController.clear();
                   }
+
                 },
                 child: Text(
                   "Insert",
@@ -95,14 +106,14 @@ class _mainPageState extends State<mainPage> {
   }
 
   void _delete(DocumentSnapshot document) {
-    collection.doc(document.id).delete();
+    _collection.doc(document.id).delete();
   }
 
   void _insertion() {
-    String result = textController.text.trim();
+    String result = _textController.text.trim();
     if (result != "") {
       DocumentReference docReference =
-          collection.doc('${DateTime.now().toUtc().millisecondsSinceEpoch}');
+          _collection.doc('${DateTime.now().toUtc().millisecondsSinceEpoch}');
       docReference.set({'Title': result, 'isCheck': false});
     }
   }
@@ -119,17 +130,29 @@ class _mainPageState extends State<mainPage> {
           title: Text('Todo-List App'),
         ),
         body: StreamBuilder<QuerySnapshot>(
-            stream: collection.snapshots(),
-            builder: (BuildContext context,AsyncSnapshot snapshot) {
+            stream: _collection.snapshots(),
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return ListView(
                   shrinkWrap: true,
                   padding: const EdgeInsets.all(10),
                   children: snapshot.data.docs.map((DocumentSnapshot document) {
-                    return Card(
+
+                    if(document.data()['isCheck'] == true){
+                      Timer(Duration(milliseconds: 1000), () {
+                              
+                              Scaffold.of(context).hideCurrentSnackBar();
+                              Scaffold.of(context)
+                                  .showSnackBar(_showSnackBar(document));
+                              _delete(document);
+                            });
+                    }
+                    return  
+                    Card(
                       elevation: 3,
                       semanticContainer: true,
-                      child: CheckboxListTile(
+                      child: CheckboxListTile(  
+
                           title: Text(
                             '${document.data()['Title']}',
                             style: TextStyle(
@@ -140,18 +163,9 @@ class _mainPageState extends State<mainPage> {
                           value: document.data()['isCheck'],
                           contentPadding: EdgeInsets.all(0),
                           controlAffinity: ListTileControlAffinity.leading,
-                          onChanged: (value) {
-                            String title = document.data()['Title'];
-                            collection
-                                .doc(document.id)
-                                .update({'Title': title, 'isCheck': value});
-                            Timer(Duration(milliseconds: 400), () {
-                              Scaffold.of(context).hideCurrentSnackBar();
-                              Scaffold.of(context)
-                                  .showSnackBar(_showSnackBar(document));
-                              _delete(document);
-                            });
-                          }),
+                          onChanged: (value) => _collection.doc(document.id)
+                          .update({'Title': document.data()['Title'], 'isCheck': value})
+                          ),
                       color: Theme.of(context).cardColor,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
@@ -170,12 +184,13 @@ class _mainPageState extends State<mainPage> {
   Widget _showSnackBar(DocumentSnapshot document) {
     String title = document.data()['Title'];
     return SnackBar(
+      duration: Duration(milliseconds: 1000),
         content: Text('$title is Complete'),
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () {
             // Some code to undo the change.
-            collection.doc(document.id).set({'Title': title, 'isCheck': false});
+            _collection.doc(document.id).set({'Title': title, 'isCheck': false});
           },
         ));
   }
