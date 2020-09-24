@@ -25,11 +25,11 @@ class MyApp extends StatelessWidget {
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
           return MaterialApp(
-<<<<<<< Updated upstream
 
-=======
+
+
             debugShowCheckedModeBanner: false,
->>>>>>> Stashed changes
+
             home: mainPage(),
           );
         }
@@ -51,73 +51,31 @@ class mainPage extends StatefulWidget {
 }
 
 class _mainPageState extends State<mainPage> {
-<<<<<<< Updated upstream
-  final collection = FirebaseFirestore.instance.collection('myTodo');
-  final textController = TextEditingController();
-=======
+
   final _collection = FirebaseFirestore.instance.collection('myTodo');
   final _textController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
->>>>>>> Stashed changes
+
   void _showDialog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-<<<<<<< Updated upstream
-          return AlertDialog(
-            content: Padding(
-                padding: EdgeInsets.all(5.0),
-                child: TextField(
-                    controller: textController,
-                    decoration: InputDecoration(
-                      hintText: ('please input here'),
-                    ))),
-            elevation: 24.0,
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('Cancel'),
-              ),
-              FlatButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                disabledColor: Colors.grey,
-                disabledTextColor: Colors.black,
-                padding: EdgeInsets.all(8.0),
-                splashColor: Colors.blueAccent,
-                onPressed: () {
-                  _insertion();
-                  if (textController.text.trim() != '') {
-                    Navigator.of(context).pop();
-                    textController.clear();
-                  }
-                },
-                child: Text(
-                  "Insert",
-                  style: TextStyle(fontSize: 15.0),
-                ),
-              )
-            ],
-          );
-=======
+
           return _myDialog();
->>>>>>> Stashed changes
         });
   }
 
   void _delete(DocumentSnapshot document) {
-    collection.doc(document.id).delete();
+    _collection.doc(document.id).delete();
   }
 
   void _insertion() {
-    String result = textController.text.trim();
+    String result = _textController.text.trim();
     if (result != "") {
       DocumentReference docReference =
-          collection.doc('${DateTime.now().toUtc().millisecondsSinceEpoch}');
+          _collection.doc('${DateTime.now().toUtc().millisecondsSinceEpoch}');
       docReference.set({'Title': result, 'isCheck': false});
     }
   }
@@ -134,78 +92,27 @@ class _mainPageState extends State<mainPage> {
         appBar: AppBar(
           title: Text('Todo-List App'),
         ),
-<<<<<<< Updated upstream
-        body: StreamBuilder<QuerySnapshot>(
-            stream: collection.snapshots(),
-            builder: (BuildContext context,AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return ListView(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(10),
-                  children: snapshot.data.docs.map((DocumentSnapshot document) {
-                    return Card(
-                      elevation: 3,
-                      semanticContainer: true,
-                      child: CheckboxListTile(
-                          title: Text(
-                            '${document.data()['Title']}',
-                            style: TextStyle(
-                                decoration: document.data()['isCheck']
-                                    ? TextDecoration.lineThrough
-                                    : TextDecoration.none),
-                          ),
-                          value: document.data()['isCheck'],
-                          contentPadding: EdgeInsets.all(0),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          onChanged: (value) {
-                            String title = document.data()['Title'];
-                            collection
-                                .doc(document.id)
-                                .update({'Title': title, 'isCheck': value});
-                            Timer(Duration(milliseconds: 400), () {
-                              Scaffold.of(context).hideCurrentSnackBar();
-                              Scaffold.of(context)
-                                  .showSnackBar(_showSnackBar(document));
-                              _delete(document);
-                            });
-                          }),
-                      color: Theme.of(context).cardColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    );
-                  }).toList(),
-                );
-              } else {
-                return Align(
-                  alignment: FractionalOffset.center,
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }));
-=======
+
         body: _myTodos());
->>>>>>> Stashed changes
+
   }
 
   Widget _showSnackBar(DocumentSnapshot document) {
     String title = document.data()['Title'];
     return SnackBar(
-<<<<<<< Updated upstream
-=======
+
         duration: Duration(milliseconds: 2000),
->>>>>>> Stashed changes
+
         content: Text('$title is Complete'),
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () {
             // Some code to undo the change.
-<<<<<<< Updated upstream
-            collection.doc(document.id).set({'Title': title, 'isCheck': false});
-=======
+
             _collection
                 .doc(document.id)
                 .set({'Title': title, 'isCheck': false});
->>>>>>> Stashed changes
+
           },
         ));
   }
@@ -258,8 +165,9 @@ class _mainPageState extends State<mainPage> {
           padding: EdgeInsets.all(8.0),
           splashColor: Colors.blueAccent,
           onPressed: () {
-            _insertion();
+
             if (_formKey.currentState.validate()) {
+              _insertion();
               Navigator.of(context).pop();
               _textController.clear();
             }
