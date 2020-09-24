@@ -17,9 +17,11 @@ class LoadingStage extends State<LoadingPages> {
           child: Column(children: [
         Align(
           alignment: FractionalOffset.center,
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+             
+          ),
         ),
-        Text('Loading...')
+        
       ])),
     );
   }
