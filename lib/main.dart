@@ -26,14 +26,6 @@ class MyApp extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           return MaterialApp(
 
-
-
-            debugShowCheckedModeBanner: false,
-
-            home: mainPage(),
-          );
-        }
-
         // Otherwise, show something whilst waiting for initialization to complete
         return MaterialApp(
             home: LoadingPages(), debugShowCheckedModeBanner: false);
@@ -52,17 +44,16 @@ class mainPage extends StatefulWidget {
 
 class _mainPageState extends State<mainPage> {
 
+
   final _collection = FirebaseFirestore.instance.collection('myTodo');
   final _textController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-
   void _showDialog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-
           return _myDialog();
         });
   }
@@ -92,27 +83,20 @@ class _mainPageState extends State<mainPage> {
         appBar: AppBar(
           title: Text('Todo-List App'),
         ),
-
         body: _myTodos());
-
   }
 
   Widget _showSnackBar(DocumentSnapshot document) {
     String title = document.data()['Title'];
     return SnackBar(
-
-        duration: Duration(milliseconds: 2000),
-
+      
+      duration: Duration(milliseconds: 1000),
         content: Text('$title is Complete'),
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () {
             // Some code to undo the change.
-
-            _collection
-                .doc(document.id)
-                .set({'Title': title, 'isCheck': false});
-
+            _collection.doc(document.id).set({'Title': title, 'isCheck': false});
           },
         ));
   }
